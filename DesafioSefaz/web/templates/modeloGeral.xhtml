@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"      
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:insert name="metadata"/>
+    <h:head>
+        <title>Desafio sefaz</title>   
+        <h:outputStylesheet library="css" name="estilo.css"/>
+        <h:outputScript library="js" name="scripts.js"/>        
+    </h:head>
+    <h:body>
+        <p:growl id="msgGlobal" life="7000"/>
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" resizable="false" closable="false"  header="Usuário logado: #{MBAutenticacao.usuario.nome}"/>
+            <p:layoutUnit position="south" resizable="false" closable="false" header="Desenvolvido por Lucas Bertoldi Dias"/>
+            
+            <p:layoutUnit position="center" resizable="false" closable="false">
+                 <ui:insert name="conteudo"/>
+            </p:layoutUnit>           
+            
+            <p:layoutUnit position="west" resizable="false" closable="false" size="200" header="Menu">
+                <ui:insert name="menu"/>                
+            </p:layoutUnit>
+        </p:layout>
+    </h:body>
+</html>

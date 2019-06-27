@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"     
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="templates/modeloGeral.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">    
+
+    <ui:define name="menu">
+        <h:form>
+            <h:panelGrid columns="1" style="width: 100%; margin-bottom: 50px;">                
+                <p:button value="Alterar minha conta" outcome="cadastro_usuario.xhtml" style="width: 100%;height: 40px;">
+                    <f:param name="acao" value="#{2}"/>
+                </p:button>
+                <p:commandButton value="Remover minha conta" style="width: 100%;height: 40px;">
+                    <p:confirm header="Tem certeza?" message="Deseja realmente remover sua conta?" icon="ui-icon-trash"/>
+                </p:commandButton> 
+                <p:commandButton value="Sair do sistema" action="#{MBAutenticacao.sair()}" style="width: 100%;height: 40px;"/>
+            </h:panelGrid>  
+
+        </h:form>       
+    </ui:define>
+
+    <ui:define name="conteudo">             
+        <h:form id="frmTabela">           
+            <p:dataTable id="tabela" widgetVar="table" value="#{MBUsuario.lista}" filteredValue="#{MBUsuario.listaFiltrada}" var="item" paginator="true" paginatorPosition="bottom" rows="10" emptyMessage="Nenhum registro encontrado">
+                <f:facet name="header">
+                    <h:outputText value="Usuários cadastrados"/>                    
+                </f:facet>  
+                <p:column headerText="Nome" filterBy="#{item.nome}">
+                    <h:outputText value="#{item.nome}"/>                      
+                </p:column>
+                <p:column headerText="Email">
+                    <h:outputText value="#{item.email}"/>                     
+                </p:column>   
+                <p:column headerText="Telefone">
+                    <p:selectOneMenu style="width: 90%;">
+                        <f:selectItems value="#{item.telefones}" var="fone" itemLabel="#{fone} "/> 
+                    </p:selectOneMenu>
+                </p:column>                                                   
+            </p:dataTable>
+            <p:blockUI block="frmTabela" trigger="frmTabela:tabela">                
+                <p:graphicImage library="imagens" name="carregar.gif"/>
+            </p:blockUI> 
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >               
+                <p:commandButton value="Sim" actionListener="#{MBUsuario.excluir()}" icon="ui-icon-check" update="msgGlobal"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>        
+    </ui:define>
+
+</ui:composition>
+
