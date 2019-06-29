@@ -8,7 +8,7 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
-    private ArrayList<Telefone> telefones;
+    private ArrayList<Telefone> telefones = new ArrayList<>();
 
     public ArrayList<Telefone> getTelefones() {
         return telefones;

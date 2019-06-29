@@ -1,7 +1,6 @@
 package br.com.desafiosefaz.dao;
 
 import br.com.desafiosefaz.conexao.ConexaoBD;
-import br.com.desafiosefaz.domain.Telefone;
 import br.com.desafiosefaz.domain.Usuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,11 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class UsuarioDao {
+public class UsuarioDao {    
 
-    private final TelefoneDao telefoneDao = new TelefoneDao();
-
-    public void Salvar(Usuario usuario) throws SQLException {
+    public int Salvar(Usuario usuario) throws SQLException {
         StringBuilder sql = new StringBuilder();
         sql.append("insert into usuario(nome_usuario,email_usuario,senha_usuario) values (?,?,?)");
         try (Connection conexao = ConexaoBD.conectar()) {
@@ -21,13 +18,9 @@ public class UsuarioDao {
             comando.setString(1, usuario.getNome());
             comando.setString(2, usuario.getEmail());
             comando.setString(3, usuario.getSenha());
-            comando.executeUpdate();
-            usuario.setCodigo(ultimoRegistro());
+            comando.executeUpdate();            
             conexao.close();
-            for (Telefone telefone : usuario.getTelefones()) {
-                telefone.setUsuario(usuario);
-                telefoneDao.Salvar(telefone);
-            }
+            return ultimoRegistro();           
         }
     }
 
@@ -41,13 +34,7 @@ public class UsuarioDao {
             comando.setString(3, usuario.getSenha());
             comando.setInt(4, usuario.getCodigo());
             comando.executeUpdate();
-            conexao.close();
-            for (Telefone telefone : usuario.getTelefones()) {
-                if (telefone.getCodigo() < 1) {
-                    telefone.setUsuario(usuario);
-                    telefoneDao.Salvar(telefone);
-                }
-            }
+            conexao.close();            
         }
     }
 
@@ -78,8 +65,7 @@ public class UsuarioDao {
                 usuario.setCodigo(resultado.getInt("codigo_usuario"));
                 usuario.setNome(resultado.getString("nome_usuario"));
                 usuario.setEmail(resultado.getString("email_usuario"));
-                usuario.setSenha(resultado.getString("senha_usuario"));
-                usuario.setTelefones(telefoneDao.Listar(resultado.getInt("codigo_usuario")));
+                usuario.setSenha(resultado.getString("senha_usuario"));               
                 return usuario;
             }
             conexao.close();
@@ -114,8 +100,7 @@ public class UsuarioDao {
                 usuario.setCodigo(resultado.getInt("codigo_usuario"));
                 usuario.setNome(resultado.getString("nome_usuario"));
                 usuario.setEmail(resultado.getString("email_usuario"));
-                usuario.setSenha(resultado.getString("senha_usuario"));
-                usuario.setTelefones(telefoneDao.Listar(resultado.getInt("codigo_usuario")));
+                usuario.setSenha(resultado.getString("senha_usuario"));                
                 lista.add(usuario);
             }
             conexao.close();

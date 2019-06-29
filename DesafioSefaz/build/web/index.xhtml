@@ -8,22 +8,68 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">    
 
     <ui:define name="conteudo">
-        <div style="width: 400px; height: 450px; background-color: #CCCCCC; margin: 0 auto; border: 5px solid #CCCCCC; text-align: center;">
-            <div style="width: 100%; height: 70px; background-color: #3366FF; padding-top: 30px;">
-                <h:outputLabel value="Login de acesso" style="color: white; font-size: 40px; font-family: DeVinne"/>
-            </div>
-            <p:graphicImage library="imagens" name="usuario.png" style="margin: 20px;"/>
-            <h:form>
+        <h:form id="frmLogin">
+            <div style="width: 400px; height: 450px; background-color: #CCCCCC; margin: 0 auto; border: 5px solid #CCCCCC; text-align: center;">
+                <div style="width: 100%; height: 70px; background-color: #3366FF; padding-top: 30px;">
+                    <h:outputLabel value="Login de acesso" style="color: white; font-size: 40px; font-family: DeVinne"/>
+                </div>
+                <p:graphicImage library="imagens" name="usuario.png" style="margin: 20px;"/>           
                 <h:panelGrid columns="1" style="width: 100%;">
                     <p:inputText value="#{MBAutenticacao.email}" style="width: 90%; height: 30px; margin-bottom: 20px;" required="true" requiredMessage="Preencha o campo e-mail"/>
                     <p:password value="#{MBAutenticacao.senha}" style="width: 90%; height: 30px; margin-bottom: 10px" required="true" requiredMessage="Preencha o campo senha"/>
-                    <p:link value="Não tenho cadastro" outcome="cadastro_usuario.xhtml">
-                         <f:param name="acao" value="#{1}"/>
-                    </p:link>
-                    <p:commandButton action="#{MBAutenticacao.entrar()}" value="Entrar" update=":msgGlobal" style="width: 90%; height: 40px; margin-top: 10px;"/>
+                    <p:outputLabel value="Não tenho cadastro" onclick="PF('dlgCadastro').show();" style="border-bottom: 1px solid black; cursor: pointer"/>                      
+                    <p:commandButton id="logar" action="#{MBAutenticacao.entrar()}" value="Entrar" update=":msgGlobal" style="width: 90%; height: 40px; margin-top: 10px;"/>
                 </h:panelGrid>
-            </h:form>            
-        </div>
+                <p:blockUI block="frmLogin" trigger="frmLogin:logar">                
+                    <p:graphicImage library="imagens" name="carregar.gif"/>
+                </p:blockUI>             
+            </div>
+        </h:form>         
+        <p:dialog widgetVar="dlgCadastro" showHeader="false" draggable="false" resizable="false" modal="true" appendTo="@(body)" width="800px" height="600px" style="overflow:auto; border-radius: 150px">
+            <div style="width: 100%; margin: 0 auto; text-align: center; background-color: #3366FF">
+                <h:outputLabel value="Cadastro de usuário" style="font-size: 50px; font-family: DeVinne; color: white;"/>
+            </div>  
+            <h:form id="frm">                
+                <h:panelGrid columns="1" style="padding: 20px; margin: 0 auto;">
+                    <h:panelGrid columns="3">
+                        <p:commandButton value="+" actionListener="#{indexBean.add()}" update="frm:tbl"/>
+                        <p:commandButton value="-" actionListener="#{indexBean.remover()}" update="frm:tbl"/>
+                        <p:selectOneMenu value="#{indexBean.tipo}">
+                            <f:selectItem itemLabel="Celular" itemValue="Celular"/>
+                            <f:selectItem itemLabel="Residencial" itemValue="Residencial"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <h:dataTable id="tbl" value="#{indexBean.usuario.telefones}" var="item">
+                        <h:column>
+                            <h:panelGrid columns="3">
+                                <p:inputMask mask="099" value="#{item.ddd}" placeholder="DDD" size="2" style="height: 30px;"/>
+                                <p:inputMask mask="9 9999-9999" value="#{item.numero}" placeholder="Digite o celular" size="41" rendered="#{item.tipo == 'Celular'}" style="height: 30px;"/>
+                                <p:inputMask mask="9999-9999" value="#{item.numero}" placeholder="Digite o numero residencial" size="41" rendered="#{item.tipo == 'Residencial'}" style="height: 30px;"/>
+                            </h:panelGrid>
+                        </h:column>
+                    </h:dataTable>
+                    <h:panelGrid columns="1">
+                        <h:panelGrid columns="1">
+                            <p:inputText value="#{indexBean.usuario.nome}" placeholder="Seu nome" maxlength="60" size="50" style="height: 30px;"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <p:inputText value="#{indexBean.usuario.email}" placeholder="Seu e-mail" maxlength="60" size="50" style="height: 30px;" validatorMessage="Email não aceito">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </p:inputText>
+                        </h:panelGrid>      
+                        <h:panelGrid columns="1">
+                            <p:password value="#{indexBean.usuario.senha}" placeholder="Sua senha" maxlength="60" size="50" style="height: 30px;"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" style="width: 100%; text-align: center;">
+                        <p:commandButton actionListener="#{indexBean.salvar()}" value="Registrar usuário" style="width: 100%; height: 40px;" update=":msgGlobal"/>
+                        <p:commandButton value="Cancelar cadastro" style="width: 100%; height: 40px;" onclick="PF('dlgCadastro').hide();" process="@this" update="frm">
+                            <p:resetInput target="frm"/>
+                        </p:commandButton>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>     
     </ui:define>
 </ui:composition>
 

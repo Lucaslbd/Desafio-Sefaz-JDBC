@@ -28,7 +28,7 @@ public class TelefoneDao {
     public void excluir(int codigo) throws SQLException {
         StringBuilder sql = new StringBuilder();
         sql.append("delete from telefone ");
-        sql.append("where codigo_telefone= ? ");
+        sql.append("where usuario= ? ");
         try (Connection conexao = ConexaoBD.conectar()) {
             PreparedStatement comando = conexao.prepareStatement(sql.toString());
             comando.setInt(1, codigo);
